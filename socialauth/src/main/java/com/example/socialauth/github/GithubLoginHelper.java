@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.socialauth.github.lib.GithubOauth;
+import com.example.socialauth.result.SocialResultListener;
 import com.facebook.login.LoginManager;
 
 
@@ -16,9 +17,9 @@ public class GithubLoginHelper {
     public static final String TAG = "GITHUB";
     public static final String PREFERENCE = "github_prefs";
 
-    private GithubLoginListener loginListener;
+    private SocialResultListener loginListener;
     Activity activity;
-    public GithubLoginHelper(Activity activity,GithubLoginListener loginListener)
+    public GithubLoginHelper(Activity activity,SocialResultListener loginListener)
     {
         this.activity=activity;
         this.loginListener=loginListener;
@@ -26,9 +27,8 @@ public class GithubLoginHelper {
 
     }
     /** to perform the login from your activity
-     * @param activity reference of your activity
      */
-    public void performSignIn(Activity activity) {
+    public void performSignIn() {
         GithubOauth
                 .Builder()
                 .withClientId("84e934a861c18661c139")
@@ -57,15 +57,15 @@ public class GithubLoginHelper {
             //Toast.makeText(activity,"Entered",Toast.LENGTH_SHORT).show();
             if(oauthToken!=null)
             {
-                loginListener.onGitSignInSuccess(oauthToken,"");
+                loginListener.onSignInSuccess(oauthToken,"",null);
             }else
             {
-                loginListener.onGitSignInFail("Authentication Failed");
+                loginListener.onSignInFail("Authentication Failed");
             }
 
         }else
         {
-            loginListener.onGitSignInFail("Authentication Failed");
+            loginListener.onSignInFail("Authentication Failed");
         }
     }
 

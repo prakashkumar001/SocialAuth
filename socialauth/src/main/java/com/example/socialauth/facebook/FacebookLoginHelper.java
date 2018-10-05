@@ -6,6 +6,7 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
+import com.example.socialauth.result.SocialResultListener;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -22,7 +23,7 @@ import java.util.Arrays;
 
 public class FacebookLoginHelper {
 
-    private FacebookLoginListener mListener;
+    private SocialResultListener mListener;
     private CallbackManager mCallBackManager;
 
     /**
@@ -31,7 +32,7 @@ public class FacebookLoginHelper {
      * @param facebookLoginListener to listen the status of the facebook login status what status is
      *                              get will be delivered to this called listener
      */
-    public FacebookLoginHelper( Activity activity,@NonNull FacebookLoginListener facebookLoginListener,String appId) {
+    public FacebookLoginHelper( Activity activity,String appId,@NonNull SocialResultListener facebookLoginListener) {
         FacebookSdk.sdkInitialize(activity);
         FacebookSdk.setApplicationId(appId);
         mListener = facebookLoginListener;
@@ -39,18 +40,18 @@ public class FacebookLoginHelper {
         FacebookCallback<LoginResult> mCallBack = new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                mListener.onFbSignInSuccess(loginResult.getAccessToken().getToken(),
-                        loginResult.getAccessToken().getUserId());
+                mListener.onSignInSuccess(loginResult.getAccessToken().getToken(),
+                        loginResult.getAccessToken().getUserId(),null);
             }
 
             @Override
             public void onCancel() {
-                mListener.onFbSignInFail("User cancelled operation");
+                mListener.onSignInFail("User cancelled operation");
             }
 
             @Override
             public void onError(FacebookException e) {
-                mListener.onFbSignInFail(e.getMessage());
+                mListener.onSignInFail(e.getMessage());
             }
         };
         LoginManager.getInstance().registerCallback(mCallBackManager, mCallBack);
@@ -100,6 +101,6 @@ public class FacebookLoginHelper {
      */
     public void performSignOut() {
         LoginManager.getInstance().logOut();
-        mListener.onFBSignOut();
+        mListener.onSignOut();
     }
 }

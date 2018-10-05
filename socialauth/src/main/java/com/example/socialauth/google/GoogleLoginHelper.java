@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import com.example.socialauth.result.SocialResultListener;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
@@ -25,7 +26,7 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
     private final String SCOPES = "oauth2:profile email";
     private final int RC_SIGN_IN = 100;
     private FragmentActivity mContext;
-    private GoogleLoginListener mListener;
+    private SocialResultListener mListener;
     private GoogleApiClient mGoogleApiClient;
 
 
@@ -34,14 +35,14 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
      *
      * @param listener       to listen the status of the facebook login status what status is
      *                       get will be delivered to this called listener
-     * @param context        application context
-     * @param serverClientId server client Id from G+ login
+     * @param activity        application context
+     * @param googleApiKey server client Id from G+ login
      */
-    public GoogleLoginHelper(@NonNull GoogleLoginListener listener, FragmentActivity context,
-                             @Nullable String serverClientId) {
-        mContext = context;
+    public GoogleLoginHelper( FragmentActivity activity,
+                             @Nullable String googleApiKey,@NonNull SocialResultListener listener) {
+        mContext = activity;
         mListener = listener;
-        buildGoogleApiClient(buildSignInOptions(serverClientId));
+        buildGoogleApiClient(buildSignInOptions(googleApiKey));
     }
 
     private GoogleSignInOptions buildSignInOptions(@Nullable String serverClientId) {
@@ -60,11 +61,10 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
     /**
      * to perform the login from your activity
      *
-     * @param activity reference of your activity
      */
-    public void performSignIn(Activity activity) {
+    public void performSignIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        activity.startActivityForResult(signInIntent, RC_SIGN_IN);
+        mContext.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     /**
@@ -105,7 +105,7 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
                     @Override
                     protected void onPostExecute(String token) {
                         GoogleSignInAccount acct = result.getSignInAccount();
-                        mListener.onGoogleAuthSignIn(token, acct.getId());
+                        mListener.onSignInSuccess(token, acct.getId(),null);
                     }
                 };
                 task.execute();
@@ -113,14 +113,14 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
 
                 mGoogleApiClient.stopAutoManage(mContext);
                 mGoogleApiClient.disconnect();
-                mListener.onGoogleAuthSignInFailed("Authentication Failed");
+                mListener.onSignInFail("Authentication Failed");
             }
         }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        mListener.onGoogleAuthSignInFailed(connectionResult.getErrorMessage());
+        mListener.onSignInFail(connectionResult.getErrorMessage());
     }
 
     /**
@@ -130,7 +130,7 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull Status status) {
-                mListener.onGoogleAuthSignOut();
+                mListener.onSignOut();
             }
         });
     }

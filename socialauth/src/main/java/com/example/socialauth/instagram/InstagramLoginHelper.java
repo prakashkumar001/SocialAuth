@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
+import com.example.socialauth.result.SocialResultListener;
 import com.facebook.login.LoginManager;
 import com.squareup.picasso.Picasso;
 import com.steelkiwi.instagramhelper.InstagramHelper;
@@ -16,10 +17,10 @@ import java.util.Arrays;
 import static android.app.Activity.RESULT_OK;
 
 public class InstagramLoginHelper {
-    private InstagramLoginListener loginListener;
+    private SocialResultListener loginListener;
     private Activity activity;
     InstagramHelper instagramHelper;
-    public InstagramLoginHelper(Activity activity,String cliendId,String redirectURL,InstagramLoginListener loginListener)
+    public InstagramLoginHelper(Activity activity,String cliendId,String redirectURL,SocialResultListener loginListener)
     {
         this.activity=activity;
         this.loginListener=loginListener;
@@ -33,9 +34,8 @@ public class InstagramLoginHelper {
     }
     /**
      * to perform the login from your fragment
-     * @param activity reference of your fragment
      */
-    public void performSignIn(Activity activity) {
+    public void performSignIn() {
 
         instagramHelper.loginFromActivity(activity);
     }
@@ -55,10 +55,10 @@ public class InstagramLoginHelper {
                     + user.getData().getFullName() + "\n"
                     + user.getData().getWebsite()
             );*/
-          loginListener.onInstagramSignInSuccess(user);
+          loginListener.onSignInSuccess(null,null,user);
 
         } else {
-            loginListener.onInstagramSignInFail("Login Failed");
+            loginListener.onSignInFail("Login Failed");
             Toast.makeText(activity, "Login failed", Toast.LENGTH_LONG).show();
         }
     }
@@ -68,6 +68,6 @@ public class InstagramLoginHelper {
      */
     public void performSignOut() {
 
-        loginListener.onInstagramSignOut();
+        loginListener.onSignOut();
     }
 }

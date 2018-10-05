@@ -15,15 +15,16 @@ import com.example.socialauth.linkedin.platform.LISessionManager;
 import com.example.socialauth.linkedin.platform.errors.LIAuthError;
 import com.example.socialauth.linkedin.platform.listeners.AuthListener;
 import com.example.socialauth.linkedin.platform.utils.Scope;
+import com.example.socialauth.result.SocialResultListener;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
 
 public class LinkedInLoginHelper {
     Activity activity;
-    LinkedInLoginListener linkedInLoginListener;
+    SocialResultListener linkedInLoginListener;
 
-    public LinkedInLoginHelper(final LinkedInLoginListener linkedInLoginListener, final Activity activity, String key)
+    public LinkedInLoginHelper(final Activity activity,final SocialResultListener linkedInLoginListener)
     {
         this.activity=activity;
         this.linkedInLoginListener=linkedInLoginListener;
@@ -37,9 +38,8 @@ public class LinkedInLoginHelper {
 
     /**
      * to perform the login from your fragment
-     * @param activity reference of your fragment
      */
-    public void performSignIn(final Activity activity) {
+    public void performSignIn() {
         computePakageHash();
         LISessionManager.getInstance(activity).init(activity, buildScope(), new AuthListener() {
             @Override
@@ -48,7 +48,7 @@ public class LinkedInLoginHelper {
                 // other calls with the SDK.
 
                 //fetchPersonalInfo();
-                linkedInLoginListener.onLinkedInAuthSignIn(LISessionManager.getInstance(activity).getSession().getAccessToken().toString(),"");
+                linkedInLoginListener.onSignInSuccess(LISessionManager.getInstance(activity).getSession().getAccessToken().toString(),"",null);
             }
 
             @Override

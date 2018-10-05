@@ -9,17 +9,12 @@ import android.widget.Button;
 import com.example.css.base.R;
 
 import com.example.socialauth.facebook.FacebookLoginHelper;
-import com.example.socialauth.facebook.FacebookLoginListener;
 import com.example.socialauth.github.GithubLoginHelper;
-import com.example.socialauth.github.GithubLoginListener;
 import com.example.socialauth.google.GoogleLoginHelper;
-import com.example.socialauth.google.GoogleLoginListener;
 import com.example.socialauth.instagram.InstagramLoginHelper;
-import com.example.socialauth.instagram.InstagramLoginListener;
 import com.example.socialauth.linkedin.LinkedInLoginHelper;
-import com.example.socialauth.linkedin.LinkedInLoginListener;
+import com.example.socialauth.result.SocialResultListener;
 import com.example.socialauth.twitter.TwitterLoginHelper;
-import com.example.socialauth.twitter.TwitterLoginListener;
 import com.steelkiwi.instagramhelper.model.InstagramUser;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -37,6 +32,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         facebook = (Button) findViewById(R.id.facebook);
         google = (Button) findViewById(R.id.google);
         linkedIn = (Button) findViewById(R.id.linkedin);
@@ -88,134 +84,139 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void onFBLogin() {
-        helper = new FacebookLoginHelper(MainActivity.this, new FacebookLoginListener() {
+        helper = new FacebookLoginHelper(MainActivity.this, "302975346940807", new SocialResultListener() {
             @Override
-            public void onFbSignInFail(String errorMessage) {
+            public void onSignInFail(String errorMessage) {
 
             }
 
             @Override
-            public void onFbSignInSuccess(String authToken, String userId) {
+            public void onSignInSuccess(String authToken, String userId, InstagramUser user) {
 
                 showMessage(authToken);
             }
 
             @Override
-            public void onFBSignOut() {
+            public void onSignOut() {
 
             }
-        }, "302975346940807");
+        });
         helper.performSignIn(MainActivity.this);
     }
 
     public void onTwitterLogin() {
-        twitterLoginHelper = new TwitterLoginHelper(MainActivity.this, getResources().getString(R.string.com_twitter_sdk_android_CONSUMER_SECRET), getResources().getString(R.string.com_twitter_sdk_android_CONSUMER_KEY), new TwitterLoginListener() {
+        twitterLoginHelper = new TwitterLoginHelper(MainActivity.this, getResources().getString(R.string.com_twitter_sdk_android_CONSUMER_SECRET), getResources().getString(R.string.com_twitter_sdk_android_CONSUMER_KEY), new SocialResultListener() {
             @Override
-            public void onTwitterSignInFail(String errorMessage) {
+            public void onSignInFail(String errorMessage) {
 
             }
 
             @Override
-            public void onTwitterSignInSuccess(String authToken, String userId) {
-
+            public void onSignInSuccess(String authToken, String userId, InstagramUser user) {
                 showMessage(authToken);
+
             }
 
+
             @Override
-            public void onTwitterSignOut() {
+            public void onSignOut() {
 
             }
         });
-        twitterLoginHelper.performSignIn(MainActivity.this);
+        twitterLoginHelper.performSignIn();
     }
 
     public void onGoogleLogin() {
-        googleLoginHelper = new GoogleLoginHelper(new GoogleLoginListener() {
+        googleLoginHelper = new GoogleLoginHelper(MainActivity.this, "AIzaSyDctVc0CGhVOt6f3YAWua9X1f0hWXgSZqs", new SocialResultListener() {
             @Override
-            public void onGoogleAuthSignIn(String authToken, String userId) {
+            public void onSignInFail(String errorMessage) {
+
+            }
+
+            @Override
+            public void onSignInSuccess(String authToken, String userId, InstagramUser user) {
                 showMessage(authToken);
-
             }
+
 
             @Override
-            public void onGoogleAuthSignInFailed(String errorMessage) {
-                showMessage(errorMessage);
-            }
-
-            @Override
-            public void onGoogleAuthSignOut() {
+            public void onSignOut() {
 
             }
-        }, MainActivity.this, "AIzaSyDctVc0CGhVOt6f3YAWua9X1f0hWXgSZqs");
 
-        googleLoginHelper.performSignIn(MainActivity.this);
+
+        });
+
+        googleLoginHelper.performSignIn();
 
 
     }
 
     void onLinkedInLogin() {
-        linkedInLoginHelper = new LinkedInLoginHelper(new LinkedInLoginListener() {
+        linkedInLoginHelper = new LinkedInLoginHelper(MainActivity.this, new SocialResultListener() {
             @Override
-            public void onLinkedInAuthSignIn(String authToken, String userId) {
+            public void onSignInFail(String errorMessage) {
 
+            }
+
+            @Override
+            public void onSignInSuccess(String authToken, String userId, InstagramUser user) {
                 showMessage(authToken);
-            }
-
-            @Override
-            public void onLinkedInAuthSignInFailed(String errorMessage) {
 
             }
 
             @Override
-            public void onLinkedInAuthSignOut() {
+            public void onSignOut() {
 
             }
-        }, MainActivity.this, "");
 
-        linkedInLoginHelper.performSignIn(MainActivity.this);
+        });
+
+        linkedInLoginHelper.performSignIn();
     }
 
     public void onGitHubLogin() {
-        githubLoginHelper = new GithubLoginHelper(MainActivity.this, new GithubLoginListener() {
+        githubLoginHelper = new GithubLoginHelper(MainActivity.this, new SocialResultListener() {
             @Override
-            public void onGitSignInFail(String errorMessage) {
+            public void onSignInFail(String errorMessage) {
                 showMessage(errorMessage);
             }
 
             @Override
-            public void onGitSignInSuccess(String authToken, String userId) {
+            public void onSignInSuccess(String authToken, String userId, InstagramUser user) {
 
                 showMessage(authToken);
             }
 
             @Override
-            public void onGitSignOut() {
+            public void onSignOut() {
 
             }
         });
 
-        githubLoginHelper.performSignIn(MainActivity.this);
+        githubLoginHelper.performSignIn();
 
     }
 
     public void onInstaGramLogin() {
-        instagramLoginHelper = new InstagramLoginHelper(MainActivity.this, "8a9feb73aed44f65bba04709c228afd5", "https://www.zencode.guru", new InstagramLoginListener() {
+        instagramLoginHelper = new InstagramLoginHelper(MainActivity.this, "8a9feb73aed44f65bba04709c228afd5", "https://www.zencode.guru", new SocialResultListener() {
             @Override
-            public void onInstagramSignInFail(String errorMessage) {
+            public void onSignInFail(String errorMessage) {
 
             }
 
             @Override
-            public void onInstagramSignInSuccess(InstagramUser user) {
+            public void onSignInSuccess(String authToken, String userId, InstagramUser user) {
 
             }
 
+
             @Override
-            public void onInstagramSignOut() {
+            public void onSignOut() {
 
             }
         });
-        instagramLoginHelper.performSignIn(MainActivity.this);
+        instagramLoginHelper.performSignIn();
 
     }
 

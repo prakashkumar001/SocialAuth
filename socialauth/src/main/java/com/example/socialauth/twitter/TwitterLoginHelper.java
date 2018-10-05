@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.socialauth.R;
+import com.example.socialauth.result.SocialResultListener;
 import com.facebook.login.LoginManager;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.DefaultLogger;
@@ -23,12 +24,12 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 import java.util.Arrays;
 
 public class TwitterLoginHelper {
-    private TwitterLoginListener loginListener;
+    private SocialResultListener loginListener;
     private TwitterAuthClient client;
+Activity activity;
 
 
-
-    public  TwitterLoginHelper(final Activity activity, @Nullable String secret, @Nullable String consumerkey , @NonNull final TwitterLoginListener loginListener)
+    public  TwitterLoginHelper(final Activity activity, @Nullable String secret, @Nullable String consumerkey , @NonNull final SocialResultListener loginListener)
     {
         Twitter.initialize(activity);
         client = new TwitterAuthClient();
@@ -40,6 +41,7 @@ public class TwitterLoginHelper {
 
         Twitter.initialize(config);
         this.loginListener=loginListener;
+        this.activity=activity;
 
 
 
@@ -70,14 +72,13 @@ public class TwitterLoginHelper {
      */
     public void performSignOut() {
         LoginManager.getInstance().logOut();
-        loginListener.onTwitterSignOut();
+        loginListener.onSignOut();
     }
 
 
     /** to perform the login from your activity
-     * @param activity reference of your activity
      */
-    public void performSignIn(final Activity activity) {
+    public void performSignIn() {
         if (getTwitterSession() == null) {
 
             if(client!=null)
@@ -92,7 +93,7 @@ public class TwitterLoginHelper {
                     // Do something with result, which provides a TwitterSession for making API calls
                     TwitterSession twitterSession = result.data;
 
-                    loginListener.onTwitterSignInSuccess(twitterSession.getAuthToken().token,String.valueOf(twitterSession.getUserId()));
+                    loginListener.onSignInSuccess(twitterSession.getAuthToken().token,String.valueOf(twitterSession.getUserId()),null);
 
                     //call fetch email only when permission is granted
                 }
@@ -100,7 +101,7 @@ public class TwitterLoginHelper {
                 @Override
                 public void failure(TwitterException e) {
 
-                    loginListener.onTwitterSignInFail(e.getMessage());
+                    loginListener.onSignInFail(e.getMessage());
                     // Do something on failure
                     Toast.makeText(activity, "Failed to authenticate. Please try again.", Toast.LENGTH_SHORT).show();
                 }
