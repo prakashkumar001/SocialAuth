@@ -1,1 +1,1 @@
-include ':app', ':socialauth',':linkedin-sdk'
+include ':app', ':socialauth'

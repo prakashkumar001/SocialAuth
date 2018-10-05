@@ -49,13 +49,14 @@ dependencies {
     //dependency to load image url over image view
     //implementation 'com.squareup.picasso:picasso:2.5.2'
 
-    //linkedin
-    implementation project(':linkedin-sdk')
 
     //github
    // compile 'com.github.geniushkg:oauthLibGithub:1.0.2'
 
     //instagram
     compile  'com.github.thelester:Instagram-Helper:1.1.1'
+
+    compile files('libs/volley.jar')
+
 
 }

@@ -10,12 +10,11 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.facebook.login.LoginManager;
-import com.linkedin.platform.LISession;
-import com.linkedin.platform.LISessionManager;
-import com.linkedin.platform.errors.LIAuthError;
-import com.linkedin.platform.listeners.AuthListener;
-import com.linkedin.platform.utils.Scope;
+
+import com.example.socialauth.linkedin.platform.LISessionManager;
+import com.example.socialauth.linkedin.platform.errors.LIAuthError;
+import com.example.socialauth.linkedin.platform.listeners.AuthListener;
+import com.example.socialauth.linkedin.platform.utils.Scope;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
