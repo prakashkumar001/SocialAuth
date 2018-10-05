@@ -25,7 +25,7 @@ public class FacebookLoginHelper {
 
     private SocialResultListener mListener;
     private CallbackManager mCallBackManager;
-
+    private Activity activity;
     /**
      * FacebookLoginHelper is help full to developer where he want to login either in activity or in fragment and deliver the result there
      *
@@ -36,6 +36,7 @@ public class FacebookLoginHelper {
         FacebookSdk.sdkInitialize(activity);
         FacebookSdk.setApplicationId(appId);
         mListener = facebookLoginListener;
+        this.activity=activity;
         mCallBackManager = CallbackManager.Factory.create();
         FacebookCallback<LoginResult> mCallBack = new FacebookCallback<LoginResult>() {
             @Override
@@ -66,9 +67,8 @@ public class FacebookLoginHelper {
 
 
     /** to perform the login from your activity
-     * @param activity reference of your activity
      */
-    public void performSignIn(Activity activity) {
+    public void performSignIn() {
         LoginManager.getInstance()
                 .logInWithReadPermissions(activity,
                         Arrays.asList("public_profile", "email"));
