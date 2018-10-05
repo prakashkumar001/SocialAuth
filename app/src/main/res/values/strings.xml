@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Base</string>
+    //twitter
+   <!-- <string name="com.twitter.sdk.android.CONSUMER_KEY">ti3mlBdVAwJM4j9oqIeNh6gSC</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">yytDBaAnmJ0MR96jerve4RjlnpTgHjP6FQw8PI4SisT3SRgFvC</string>
+  -->  <string name="facebook_app_id">268310463798293</string>
+    <string name="fb_login_protocol_scheme">fb268310463798293</string>
+
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">6G8FwykahzgpuGA9lEDN2tGqo</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">sQWXauI0Qf8teRTgDizXu97rFWL3lkZ30zzVjUHoV02iB2xXUH</string>
+</resources>
