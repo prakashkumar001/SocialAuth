@@ -2,17 +2,28 @@ package com.example.socialauth.facebook;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.example.socialauth.result.SocialResultListener;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -26,36 +37,38 @@ public class FacebookLoginHelper {
     private SocialResultListener mListener;
     private CallbackManager mCallBackManager;
     private Activity activity;
+    public FBInfo info ;
+
     /**
      * FacebookLoginHelper is help full to developer where he want to login either in activity or in fragment and deliver the result there
      *
      * @param facebookLoginListener to listen the status of the facebook login status what status is
      *                              get will be delivered to this called listener
      */
-    public FacebookLoginHelper( Activity activity,String appId,@NonNull SocialResultListener facebookLoginListener) {
+    public FacebookLoginHelper( Activity activity,String appId,@NonNull final SocialResultListener facebookLoginListener) {
         FacebookSdk.sdkInitialize(activity);
         FacebookSdk.setApplicationId(appId);
         mListener = facebookLoginListener;
         this.activity=activity;
         mCallBackManager = CallbackManager.Factory.create();
-        FacebookCallback<LoginResult> mCallBack = new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                mListener.onSignInSuccess(loginResult.getAccessToken().getToken(),
-                        loginResult.getAccessToken().getUserId(),null);
-            }
+        LoginManager.getInstance().registerCallback(mCallBackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        // App code
+                       getFbInfo(loginResult);
+                    }
 
-            @Override
-            public void onCancel() {
-                mListener.onSignInFail("User cancelled operation");
-            }
+                    @Override
+                    public void onCancel() {
+                        // App code
+                    }
 
-            @Override
-            public void onError(FacebookException e) {
-                mListener.onSignInFail(e.getMessage());
-            }
-        };
-        LoginManager.getInstance().registerCallback(mCallBackManager, mCallBack);
+                    @Override
+                    public void onError(FacebookException exception) {
+                        // App code
+                    }
+                });
     }
 
     @NonNull
@@ -102,5 +115,37 @@ public class FacebookLoginHelper {
     public void performSignOut() {
         LoginManager.getInstance().logOut();
         mListener.onSignOut();
+    }
+
+    public void getFbInfo(LoginResult loginResult) {
+        GraphRequest request = GraphRequest.newMeRequest(
+                loginResult.getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        // Application code
+                        try {
+                            Log.i("Response",response.toString());
+
+                            String email = response.getJSONObject().getString("email");
+                            String firstName = response.getJSONObject().getString("first_name");
+                            String lastName = response.getJSONObject().getString("last_name");
+                            String id = response.getJSONObject().getString("id");
+
+                            FBInfo info=new FBInfo(id,firstName,lastName,email);
+                            mListener.onSignInSuccess(info,"",null);
+
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,email,first_name,last_name,gender");
+        request.setParameters(parameters);
+        request.executeAsync();
+
     }
 }

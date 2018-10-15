@@ -7,27 +7,36 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.widget.Toast;
+
 
 import com.example.socialauth.result.SocialResultListener;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
 
 import java.io.IOException;
 
-public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedListener {
-    private final String SCOPES = "oauth2:profile email";
+public class GoogleLoginHelper {
     private final int RC_SIGN_IN = 100;
     private FragmentActivity mContext;
     private SocialResultListener mListener;
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleSignInClient mGoogleApiClient;
+    public String TAG="GOOgle";
 
 
     /**
@@ -42,20 +51,18 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
                              @Nullable String googleApiKey,@NonNull SocialResultListener listener) {
         mContext = activity;
         mListener = listener;
-        buildGoogleApiClient(buildSignInOptions(googleApiKey));
+
+        buildSignInOptions(googleApiKey);
     }
 
-    private GoogleSignInOptions buildSignInOptions(@Nullable String serverClientId) {
-        GoogleSignInOptions.Builder gso =
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail();
-        if (serverClientId != null) gso.requestIdToken(serverClientId);
-        return gso.build();
-    }
-
-    private void buildGoogleApiClient(@NonNull GoogleSignInOptions gso) {
-        mGoogleApiClient = new GoogleApiClient.Builder(mContext).enableAutoManage(mContext, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+    private void buildSignInOptions(@Nullable String serverClientId) {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
                 .build();
+
+        mGoogleApiClient = GoogleSignIn.getClient(mContext, gso);
+
+
     }
 
     /**
@@ -63,19 +70,10 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
      *
      */
     public void performSignIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        Intent signInIntent = mGoogleApiClient .getSignInIntent();
         mContext.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    /**
-     * to perform the login from your fragment
-     *
-     * @param fragment reference of your fragment
-     */
-    public void performSignIn(Fragment fragment) {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        fragment.startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
 
     /**
      * just overwrite onActivityResult in your Activity / Fragment to fetch the result
@@ -86,54 +84,32 @@ public class GoogleLoginHelper implements GoogleApiClient.OnConnectionFailedList
      * @param data
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+// Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        String token = null;
-                        try {
-                            token =
-                                    GoogleAuthUtil.getToken(mContext, result.getSignInAccount().getAccount(), SCOPES);
-                        } catch (IOException | GoogleAuthException e) {
-                            e.printStackTrace();
-                        }
-                        return token;
-                    }
-
-                    @Override
-                    protected void onPostExecute(String token) {
-                        GoogleSignInAccount acct = result.getSignInAccount();
-                        mListener.onSignInSuccess(token, acct.getId(),null);
-                    }
-                };
-                task.execute();
-            } else {
-
-                mGoogleApiClient.stopAutoManage(mContext);
-                mGoogleApiClient.disconnect();
-                mListener.onSignInFail("Authentication Failed");
-            }
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
         }
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        mListener.onSignInFail(connectionResult.getErrorMessage());
-    }
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
-    /**
-     * when ever user want to preform sign-out he need to call this method
-     */
-    public void performSignOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
-            @Override
-            public void onResult(@NonNull Status status) {
-                mListener.onSignOut();
-            }
-        });
+            GoogleInfo info=new GoogleInfo(account.getDisplayName(),account.getEmail(),account.getId(),account.getIdToken());
+           // Toast.makeText(mContext,account.getEmail(),Toast.LENGTH_SHORT).show();
+            // Signed in successfully, show authenticated UI.
+           // updateUI(account);
+            mListener.onSignInSuccess(info,"","");
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+           // updateUI(null);
+            mListener.onSignInFail("Authentication Failed");
+        }
     }
-
 
 }

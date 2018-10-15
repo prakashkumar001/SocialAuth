@@ -19,10 +19,13 @@ public class GithubLoginHelper {
 
     private SocialResultListener loginListener;
     Activity activity;
-    public GithubLoginHelper(Activity activity,SocialResultListener loginListener)
+    String clientId,clientSecret;
+    public GithubLoginHelper(Activity activity,String clientId,String clientSecret,SocialResultListener loginListener)
     {
         this.activity=activity;
         this.loginListener=loginListener;
+        this.clientId=clientId;
+        this.clientSecret=clientSecret;
 
 
     }
@@ -31,8 +34,8 @@ public class GithubLoginHelper {
     public void performSignIn() {
         GithubOauth
                 .Builder()
-                .withClientId("84e934a861c18661c139")
-                .withClientSecret("c43b8be29783216d00fd4b227effc5642b92743f")
+                .withClientId(clientId)//"84e934a861c18661c139"
+                .withClientSecret(clientSecret)//"c43b8be29783216d00fd4b227effc5642b92743f"
                 .withContext(activity)
                 .packageName("com.example.css.base")
                 //.nextActivity("com.hardikgoswami.github_oauth_lib.UserActivity")
