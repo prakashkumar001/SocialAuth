@@ -1,10 +1,14 @@
 package com.example.socialauth.twitter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 
 import com.example.socialauth.R;
@@ -23,6 +27,8 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 
 import java.util.Arrays;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class TwitterLoginHelper {
     private SocialResultListener loginListener;
     private TwitterAuthClient client;
@@ -38,7 +44,6 @@ Activity activity;
                 .twitterAuthConfig(new TwitterAuthConfig(consumerkey,secret))
                 .debug(true)
                 .build();
-
         Twitter.initialize(config);
         this.loginListener=loginListener;
         this.activity=activity;
@@ -67,18 +72,12 @@ Activity activity;
         client.onActivityResult(requestCode, resultCode, data);
     }
 
-    /**
-     * when ever user want to preform sign-out he need to call this method
-     */
-    public void performSignOut() {
-        LoginManager.getInstance().logOut();
-        loginListener.onSignOut();
-    }
-
 
     /** to perform the login from your activity
      */
     public void performSignIn() {
+        logoutTwitter();
+
         if (getTwitterSession() == null) {
 
             if(client!=null)
@@ -91,11 +90,30 @@ Activity activity;
                 public void success(Result<TwitterSession> result) {
 
                     // Do something with result, which provides a TwitterSession for making API calls
-                    TwitterSession twitterSession = result.data;
+                   final TwitterSession twitterSession = result.data;
 
-                    loginListener.onSignInSuccess(twitterSession.getAuthToken().token,String.valueOf(twitterSession.getUserId()),null);
+                    //loginListener.onSignInSuccess(twitterSession.getAuthToken().token,String.valueOf(twitterSession.getUserId()),null);
+
 
                     //call fetch email only when permission is granted
+
+                    client.requestEmail(twitterSession, new com.twitter.sdk.android.core.Callback<String>() {
+                        @Override
+                        public void success(Result<String> emailResult) {
+                            String email = emailResult.data;
+                            // ...
+
+                            TwitterInfo info=new TwitterInfo(String.valueOf(twitterSession.getUserId()),twitterSession.getUserName(),"",email);
+
+                            loginListener.onSignInSuccess(info,"","");
+
+                        }
+
+                        @Override
+                        public void failure(TwitterException e) {
+                            loginListener.onSignInFail(e.toString());
+                        }
+                    });
                 }
 
                 @Override
@@ -111,6 +129,29 @@ Activity activity;
             Toast.makeText(activity, "User already authenticated", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    public void logoutTwitter() {
+        TwitterSession twitterSession = TwitterCore.getInstance().getSessionManager().getActiveSession();
+        if (twitterSession != null) {
+            ClearCookies(getApplicationContext());
+             TwitterCore.getInstance().getSessionManager().clearActiveSession();
+        }
+    }
+
+    public static void ClearCookies(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else {
+            CookieSyncManager cookieSyncMngr=CookieSyncManager.createInstance(context);
+            cookieSyncMngr.startSync();
+            CookieManager cookieManager=CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+            cookieSyncMngr.stopSync();
+            cookieSyncMngr.sync();
+        }
     }
 
 

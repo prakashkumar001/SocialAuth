@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 
 import com.example.socialauth.result.SocialResultListener;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
@@ -74,6 +75,15 @@ public class GoogleLoginHelper {
         mContext.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    /**
+     * when ever user want to preform sign-out he need to call this method
+     */
+    public void performSignOut() {
+       if(mGoogleApiClient.getSignInIntent()!=null)
+       {
+           mGoogleApiClient.signOut();
+       }
+    }
 
     /**
      * just overwrite onActivityResult in your Activity / Fragment to fetch the result

@@ -4,8 +4,8 @@
     <string name="facebook_app_id">703379750037772</string>
     <string name="fb_login_protocol_scheme">fb703379750037772</string>
 
-    <string name="com.twitter.sdk.android.CONSUMER_KEY">6G8FwykahzgpuGA9lEDN2tGqo</string>
-    <string name="com.twitter.sdk.android.CONSUMER_SECRET">sQWXauI0Qf8teRTgDizXu97rFWL3lkZ30zzVjUHoV02iB2xXUH</string>
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">iBFEzd12gWeDdVFuPEERbVnpp</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">DjjecRaaSYmlGb33wrEomrC3HF983SKjKMj0RnSuh9N4ri59rB</string>
 
     <string name="github.SECRET">6G8FwykahzgpuGA9lEDN2tGqo</string>
     <string name="github.CLIENT_ID">sQWXauI0Qf8teRTgDizXu97rFWL3lkZ30zzVjUHoV02iB2xXUH</string>

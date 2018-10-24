@@ -24,6 +24,7 @@ import com.example.socialauth.google.GoogleLoginHelper;
 import com.example.socialauth.instagram.InstagramLoginHelper;
 import com.example.socialauth.linkedin.LinkedInLoginHelper;
 import com.example.socialauth.result.SocialResultListener;
+import com.example.socialauth.twitter.TwitterInfo;
 import com.example.socialauth.twitter.TwitterLoginHelper;
 
 import java.security.MessageDigest;
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if(requestCode==64206)
         {
             helper.onActivityResult(requestCode,resultCode,data);
+        }else {
+            twitterLoginHelper.onActivityResult(requestCode,resultCode,data);
         }
 
         // super.onActivityResult(requestCode, resultCode, data);
@@ -130,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onSignInSuccess(Object authToken, String userId, String user) {
-                FBInfo fbInfo=(FBInfo)authToken;
-                showMessage(fbInfo.email);
+                TwitterInfo twitterInfo=(TwitterInfo)authToken;
+                showMessage(twitterInfo.email);
 
             }
 
