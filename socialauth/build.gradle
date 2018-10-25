@@ -31,21 +31,21 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     //fb
-    compile 'com.facebook.android:facebook-android-sdk:4.37.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.37.0'
     //google
-    compile 'com.google.android.gms:play-services-auth:16.0.1'
-    compile 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.4'
 
     // Include all the Twitter APIs
     //compile 'com.twitter.sdk.android:twitter:3.1.1'
     //include only the necessary dependencies to avoid the Android dex limit
-    compile 'com.twitter.sdk.android:twitter-core:3.1.1'
-    compile 'com.twitter.sdk.android:tweet-ui:3.1.1'
+    implementation 'com.twitter.sdk.android:twitter-core:3.3.0'
+    implementation 'com.twitter.sdk.android:tweet-ui:3.3.0'
     //dependency to load image url over image view
     //implementation 'com.squareup.picasso:picasso:2.5.2'
     //github
     // compile 'com.github.geniushkg:oauthLibGithub:1.0.2'
     //instagram
    // compile 'com.github.thelester:Instagram-Helper:1.1.1'
-    compile files('libs/volley.jar')
+   // implementation files('libs/volley.jar')
 }
