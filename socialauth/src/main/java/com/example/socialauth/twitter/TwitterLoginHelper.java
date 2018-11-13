@@ -103,7 +103,23 @@ Activity activity;
                             String email = emailResult.data;
                             // ...
 
-                            TwitterInfo info=new TwitterInfo(String.valueOf(twitterSession.getUserId()),twitterSession.getUserName(),"",email);
+                            String[] names=twitterSession.getUserName().split("_");
+                            String fname="";
+                            String lname="";
+                            for(int i=0;i<names.length;i++)
+                            {
+                                if(i==0)
+                                {
+                                    fname=names[0];
+                                }else {
+                                    lname=lname+names[i];
+                                }
+
+
+
+                            }
+
+                            TwitterInfo info=new TwitterInfo(String.valueOf(twitterSession.getUserId()),fname,lname,email);
 
                             loginListener.onSignInSuccess(info,"","");
 
