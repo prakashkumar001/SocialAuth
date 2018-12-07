@@ -18,6 +18,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -113,8 +114,19 @@ public class FacebookLoginHelper {
      * when ever user want to preform sign-out he need to call this method
      */
     public void performSignOut() {
-        LoginManager.getInstance().logOut();
-        mListener.onSignOut();
+        FacebookSdk.sdkInitialize(activity);
+        if (AccessToken.getCurrentAccessToken() == null) {
+            return; // user already logged out
+        }
+
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, new GraphRequest
+                .Callback() {
+            @Override
+            public void onCompleted(GraphResponse graphResponse) {
+                LoginManager.getInstance().logOut();
+                mListener.onSignOut();
+            }
+        }).executeAsync();
     }
 
     public void getFbInfo(LoginResult loginResult) {
