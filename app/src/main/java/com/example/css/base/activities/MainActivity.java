@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onSignInSuccess(Object authToken, String userId, String user) {
 
                 FBInfo fbInfo=(FBInfo)authToken;
-                showMessage(fbInfo.email);
+                showMessage(fbInfo.fname +fbInfo.email);
             }
 
             @Override

@@ -138,8 +138,15 @@ public class FacebookLoginHelper {
                         // Application code
                         try {
                             Log.i("Response",response.toString());
+                            String email="";
 
-                            String email = response.getJSONObject().getString("email");
+                            try{
+                                email = response.getJSONObject().getString("email");
+
+                            }catch (Exception e)
+                            {
+
+                            }
                             String firstName = response.getJSONObject().getString("first_name");
                             String lastName = response.getJSONObject().getString("last_name");
                             String id = response.getJSONObject().getString("id");
