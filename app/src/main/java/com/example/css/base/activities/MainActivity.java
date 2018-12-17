@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onSignInSuccess(Object authToken, String userId, String user) {
 
                 FBInfo fbInfo=(FBInfo)authToken;
-                showMessage(fbInfo.fname +fbInfo.email);
+               // showMessage(fbInfo.fname +fbInfo.email);
             }
 
             @Override
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onSignInSuccess(Object authToken, String userId, String user) {
                 TwitterInfo twitterInfo=(TwitterInfo)authToken;
-                showMessage(twitterInfo.email);
+                //showMessage(twitterInfo.email);
 
             }
 
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onSignInSuccess(Object authToken, String userId, String user) {
                 GoogleInfo info=(GoogleInfo)authToken;
 
-                showMessage(info.email);
+               // showMessage(info.email);
             }
 
 
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onSignInSuccess(Object authToken, String userId, String user) {
-                showMessage(authToken.toString());
+               // showMessage(authToken.toString());
 
             }
 
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onSignInSuccess(Object authToken, String userId, String user) {
 
-                showMessage(authToken.toString());
+              //  showMessage(authToken.toString());
             }
 
             @Override
