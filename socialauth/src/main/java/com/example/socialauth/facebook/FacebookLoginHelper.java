@@ -136,29 +136,47 @@ public class FacebookLoginHelper {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
                         // Application code
+                        Log.i("Response",response.toString());
+                        String email="";
+                        String firstName="";
+                        String lastName="";
+                        String id="";
                         try {
-                            Log.i("Response",response.toString());
-                            String email="";
+                            email = response.getJSONObject().getString("email");
 
-                            try{
-                                email = response.getJSONObject().getString("email");
+                        }catch (Exception e)
+                        {
 
-                            }catch (Exception e)
-                            {
-
-                            }
-                            String firstName = response.getJSONObject().getString("first_name");
-                            String lastName = response.getJSONObject().getString("last_name");
-                            String id = response.getJSONObject().getString("id");
-
-                            FBInfo info=new FBInfo(id,firstName,lastName,email);
-                            mListener.onSignInSuccess(info,"",null);
-
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+
+                        try {
+                            firstName = response.getJSONObject().getString("first_name");
+
+                        }catch (Exception e)
+                        {
+
+                        }
+
+
+                        try {
+                            lastName = response.getJSONObject().getString("last_name");
+
+                        }catch (Exception e)
+                        {
+
+                        }
+
+                        try {
+                            id = response.getJSONObject().getString("id");
+
+                        }catch (Exception e)
+                        {
+
+                        }
+
+                        FBInfo info=new FBInfo(id,firstName,lastName,email);
+                        mListener.onSignInSuccess(info,"",null);
+
                     }
                 });
         Bundle parameters = new Bundle();
