@@ -18,6 +18,7 @@ import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
@@ -32,6 +33,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class TwitterLoginHelper {
     private SocialResultListener loginListener;
     private TwitterAuthClient client;
+    TwitterApiClient apiClient;
 Activity activity;
 
 
@@ -79,7 +81,6 @@ Activity activity;
         logoutTwitter();
 
         if (getTwitterSession() == null) {
-
             if(client!=null)
             {
                 client.cancelAuthorize();
@@ -119,6 +120,7 @@ Activity activity;
 
                             }
 */
+
 
                             String fname=twitterSession.getUserName();
                             String lname="";
