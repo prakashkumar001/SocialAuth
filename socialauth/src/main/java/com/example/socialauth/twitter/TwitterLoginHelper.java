@@ -25,8 +25,11 @@ import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.models.User;
 
 import java.util.Arrays;
+
+import retrofit2.Call;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -93,18 +96,21 @@ Activity activity;
                     // Do something with result, which provides a TwitterSession for making API calls
                    final TwitterSession twitterSession = result.data;
 
+
+                    fetchTwitterName(twitterSession);
+
                     //loginListener.onSignInSuccess(twitterSession.getAuthToken().token,String.valueOf(twitterSession.getUserId()),null);
 
 
                     //call fetch email only when permission is granted
 
-                    client.requestEmail(twitterSession, new com.twitter.sdk.android.core.Callback<String>() {
+                  /*  client.requestEmail(twitterSession, new com.twitter.sdk.android.core.Callback<String>() {
                         @Override
                         public void success(Result<String> emailResult) {
                             String email = emailResult.data;
                             // ...
 
-                          /*  String[] names=twitterSession.getUserName().split("_");
+                          *//*  String[] names=twitterSession.getUserName().split("_");
                             String fname="";
                             String lname="";
                             for(int i=0;i<names.length;i++)
@@ -119,7 +125,7 @@ Activity activity;
 
 
                             }
-*/
+*//*
 
 
                             String fname=twitterSession.getUserName();
@@ -134,7 +140,7 @@ Activity activity;
                         public void failure(TwitterException e) {
                             loginListener.onSignInFail(e.toString());
                         }
-                    });
+                    });*/
                 }
 
                 @Override
@@ -174,6 +180,49 @@ Activity activity;
             cookieSyncMngr.sync();
         }
     }
+
+
+
+    public void fetchTwitterName(TwitterSession session) {
+        //check if user is already authenticated or not
+        if (session != null) {
+
+            //fetch twitter image with other information if user is already authenticated
+
+            //initialize twitter api client
+            TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
+
+            //Link for Help : https://developer.twitter.com/en/docs/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials
+
+            //pass includeEmail : true if you want to fetch Email as well
+            Call<User> call = twitterApiClient.getAccountService().verifyCredentials(true, false, true);
+            call.enqueue(new Callback<User>() {
+                @Override
+                public void success(Result<User> result) {
+                    User user = result.data;
+
+                    String fname=user.name;
+                    String lname="";
+                    TwitterInfo info=new TwitterInfo(String.valueOf(user.id),fname,lname,user.email);
+
+                    loginListener.onSignInSuccess(info,"","");
+
+                }
+
+                @Override
+                public void failure(TwitterException exception) {
+                    loginListener.onSignInFail(exception.getMessage());
+                    // Do something on failure
+                    Toast.makeText(activity, "Failed to authenticate. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            //if user is not authenticated first ask user to do authentication
+            Toast.makeText(activity, "First to Twitter auth to Verify Credentials.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
 
 
 }
