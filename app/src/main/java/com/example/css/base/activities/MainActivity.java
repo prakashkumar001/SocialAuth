@@ -227,10 +227,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onSignInFail(String errorMessage) {
 
             }
-
             @Override
-            public void onSignInSuccess(Object authToken, String userId, InstagramUser user) {
+            public void onSignInSuccess(Object authToken, String userId, String user) {
 
+                  showMessage(authToken.toString());
             }
 
 
@@ -241,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         instagramLoginHelper.performSignIn();
 
-    }
-*/
+    }*/
+
     public void showMessage(String message) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }

@@ -46,6 +46,6 @@ dependencies {
     //github
     // compile 'com.github.geniushkg:oauthLibGithub:1.0.2'
     //instagram
-   // compile 'com.github.thelester:Instagram-Helper:1.1.1'
+   //compile 'com.github.thelester:Instagram-Helper:1.1.1'
    // implementation files('libs/volley.jar')
 }
