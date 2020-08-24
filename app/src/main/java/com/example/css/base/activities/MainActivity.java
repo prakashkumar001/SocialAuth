@@ -18,11 +18,8 @@ import android.widget.Toast;
 import com.example.css.base.R;
 import com.example.socialauth.facebook.FBInfo;
 import com.example.socialauth.facebook.FacebookLoginHelper;
-import com.example.socialauth.github.GithubLoginHelper;
 import com.example.socialauth.google.GoogleInfo;
 import com.example.socialauth.google.GoogleLoginHelper;
-import com.example.socialauth.instagram.InstagramLoginHelper;
-import com.example.socialauth.linkedin.LinkedInLoginHelper;
 import com.example.socialauth.result.SocialResultListener;
 import com.example.socialauth.twitter.TwitterInfo;
 import com.example.socialauth.twitter.TwitterLoginHelper;
@@ -37,9 +34,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FacebookLoginHelper helper;
     GoogleLoginHelper googleLoginHelper;
     TwitterLoginHelper twitterLoginHelper;
-    LinkedInLoginHelper linkedInLoginHelper;
-    GithubLoginHelper githubLoginHelper;
-    InstagramLoginHelper instagramLoginHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +50,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         facebook.setOnClickListener(this);
         google.setOnClickListener(this);
         linkedIn.setOnClickListener(this);
-        twitter.setOnClickListener(this);
-        git.setOnClickListener(this);
-        instagram.setOnClickListener(this);
 
 
     }
@@ -68,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (requestCode == 100) {
             googleLoginHelper.onActivityResult(requestCode,resultCode,data);
-        } else if (requestCode == 1000) {
-            githubLoginHelper.onActivityResult(requestCode, resultCode, data);
         }else if(requestCode==64206)
         {
             helper.onActivityResult(requestCode,resultCode,data);
@@ -93,12 +82,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             onGoogleLogin();
         } else if (v == twitter) {
             onTwitterLogin();
-        } else if (v == linkedIn) {
-            onLinkedInLogin();
-        } else if (v == git) {
-            onGitHubLogin();
-        } else if (v == instagram) {
-            //onInstaGramLogin();
         }
     }
 
@@ -174,74 +157,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      googleLoginHelper.performSignIn();
 
     }
-
-    void onLinkedInLogin() {
-        linkedInLoginHelper = new LinkedInLoginHelper(MainActivity.this, new SocialResultListener() {
-            @Override
-            public void onSignInFail(String errorMessage) {
-
-            }
-
-            @Override
-            public void onSignInSuccess(Object authToken, String userId, String user) {
-               // showMessage(authToken.toString());
-
-            }
-
-            @Override
-            public void onSignOut() {
-
-            }
-
-        });
-
-        linkedInLoginHelper.performSignIn();
-    }
-
-    public void onGitHubLogin() {
-        githubLoginHelper = new GithubLoginHelper(MainActivity.this,getResources().getString(R.string.github_CLIENT_ID),getResources().getString(R.string.github_SECRET), new SocialResultListener() {
-            @Override
-            public void onSignInFail(String errorMessage) {
-                showMessage(errorMessage);
-            }
-
-            @Override
-            public void onSignInSuccess(Object authToken, String userId, String user) {
-
-              //  showMessage(authToken.toString());
-            }
-
-            @Override
-            public void onSignOut() {
-
-            }
-        });
-
-        githubLoginHelper.performSignIn();
-
-    }
-
-   /* public void onInstaGramLogin() {
-        instagramLoginHelper = new InstagramLoginHelper(MainActivity.this, "8a9feb73aed44f65bba04709c228afd5", "https://www.zencode.guru", new SocialResultListener() {
-            @Override
-            public void onSignInFail(String errorMessage) {
-
-            }
-            @Override
-            public void onSignInSuccess(Object authToken, String userId, String user) {
-
-                  showMessage(authToken.toString());
-            }
-
-
-            @Override
-            public void onSignOut() {
-
-            }
-        });
-        instagramLoginHelper.performSignIn();
-
-    }*/
 
     public void showMessage(String message) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
