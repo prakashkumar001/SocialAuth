@@ -108,7 +108,11 @@ public class GoogleLoginHelper {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
-            GoogleInfo info=new GoogleInfo(account.getGivenName(),account.getFamilyName(),account.getEmail(),account.getId(),account.getIdToken(),account.getPhotoUrl().toString());
+            String image="";
+            if(account.getPhotoUrl()!=null){
+                image=account.getPhotoUrl().toString();
+            }
+            GoogleInfo info=new GoogleInfo(account.getGivenName(),account.getFamilyName(),account.getEmail(),account.getId(),account.getIdToken(),image);
            // Toast.makeText(mContext,account.getEmail(),Toast.LENGTH_SHORT).show();
             // Signed in successfully, show authenticated UI.
            // updateUI(account);
